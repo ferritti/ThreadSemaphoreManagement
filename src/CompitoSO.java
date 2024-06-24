@@ -19,7 +19,7 @@ class ArrayGenerator{
             array[i] = i + a;
         Thread.sleep(TG);
         nGen++;
-        a++;  //nel compito avevo fatto anche k++, ma non era necessario.
+        a++;
         mutex.release();
         return array;
     }
@@ -62,7 +62,7 @@ class ProcessorThread extends Thread{
                     sleep(T);
                     queue.putResult(sum, array);
                     nProc++;
-                }finally {  //rispetto al compito ho aggiunto un try e finally per assicurarmi di rilasciare le risorse acquisite
+                }finally {
                     resourceManager.releaseResource(r);
                 }
             }
@@ -81,7 +81,7 @@ class Queue{
     public void putResult(int s,int[] a) throws InterruptedException {
         vuote.acquire();
         mutex.acquire();
-        Result r = new Result(s, a);//nel compito ho scritto Person ma intendevo Result, mi sono confuso con i nomi
+        Result r = new Result(s, a);
         results.add(r);
         mutex.release();
         piene.release();
@@ -90,11 +90,11 @@ class Queue{
     public Result[] getResult() throws InterruptedException{
         piene.acquire(2);
         mutex.acquire();
-        Result[] r = new Result[2];  //anche qui ho scritto Person ma intendevo Result
+        Result[] r = new Result[2];
         r[0]=results.removeFirst();
-        r[1]=results.removeFirst();   //nel compito facevo un array di interi per ritornare solo i risultati delle somme
-        mutex.release();              //fatte dai processor, mi sono reso conto che il testo intendesse con "risultati" sia
-        vuote.release(2);     //la somma degli elementi che l'array, quindi ho modificato il metodo mettendo un array di result.
+        r[1]=results.removeFirst();
+        mutex.release();
+        vuote.release(2);
         return r;
     }
 }
@@ -108,9 +108,9 @@ class ResourceManager{
     public void acquireResource(int n) throws InterruptedException{
         resources.acquire(n);
     }
-    public void releaseResource(int n) throws InterruptedException{ //nel compito quando ho usato questo metodo in processor avevo messo
-        resources.release(n);                                       //le risorse nell'argomento del metodo, poi ho dimenticato di specificarle qui
-    }                                                               //quindi, come per l'acquire, ho aggiunto int n.
+    public void releaseResource(int n) throws InterruptedException{
+        resources.release(n);
+    }
 }
 class OutputThread extends Thread{
     Queue queue;
@@ -123,7 +123,7 @@ class OutputThread extends Thread{
     public void run(){
         try{
             while(true){
-                Result[] r = queue.getResult();   //dato che ho modificato il metodo getResult() qui ho sostituito l'array di interi con quello di Result
+                Result[] r = queue.getResult();
                 System.out.println("Array: "+Arrays.toString(r[0].array)+" Result: "+r[0].result);
                 System.out.println("Array: "+Arrays.toString(r[1].array)+" Result: "+r[1].result);
                 nStamp+=2;
@@ -175,7 +175,7 @@ public class CompitoSO{
             System.out.println(p.getName()+" has processed "+p.nProc+" arrays");
         }
 
-        System.out.println();//per un fattore estetico ho aggiunto delle stampe vuote
+        System.out.println();
 
         for(OutputThread o : ot){
             o.join();
